@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const ObjectId = require('mongodb').ObjectId;
+const SSLCommerzPayment = require('sslcommerz');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -63,6 +64,66 @@ client.connect(err => {
         const result = await cursor.toArray();
         res.send(result);
     })
+    //sslcommerz init
+    app.get('/init/:amount', (req, res) => {
+        const data = {
+            total_amount: req.params.amount,
+            currency: 'BDT',
+            tran_id: 'REF123',
+            success_url: 'https://frozen-falls-89510.herokuapp.com/success',
+            fail_url: 'https://frozen-falls-89510.herokuapp.com/fail',
+            cancel_url: 'https://frozen-falls-89510.herokuapp.com/cancel',
+            ipn_url: 'https://frozen-falls-89510.herokuapp.com/ipn',
+            shipping_method: 'Courier',
+            product_name: 'Computer.',
+            product_category: 'Electronic',
+            product_profile: 'general',
+            cus_name: 'Customer Name',
+            cus_email: 'cust@yahoo.com',
+            cus_add1: 'Dhaka',
+            cus_add2: 'Dhaka',
+            cus_city: 'Dhaka',
+            cus_state: 'Dhaka',
+            cus_postcode: '1000',
+            cus_country: 'Bangladesh',
+            cus_phone: '01711111111',
+            cus_fax: '01711111111',
+            ship_name: 'Customer Name',
+            ship_add1: 'Dhaka',
+            ship_add2: 'Dhaka',
+            ship_city: 'Dhaka',
+            ship_state: 'Dhaka',
+            ship_postcode: 1000,
+            ship_country: 'Bangladesh',
+            multi_card_name: 'mastercard',
+            value_a: 'ref001_A',
+            value_b: 'ref002_B',
+            value_c: 'ref003_C',
+            value_d: 'ref004_D'
+        };
+        const sslcommer = new SSLCommerzPayment(process.env.STORE_ID, process.env.STORE_PASS, false) //true for live default false for sandbox
+        sslcommer.init(data).then(data => {
+            //process the response that got from sslcommerz
+            //https://developer.sslcommerz.com/doc/v4/#returned-parameters
+            res.redirect(data.GatewayPageURL);
+        });
+    })
+    app.post('/success', async (req, res) => {
+        console.log(req.body);
+        res.status(200).send(req.body);
+    })
+    app.post('/fail', async (req, res) => {
+        console.log(req.body);
+        res.status(400).send(req.body);
+    })
+    app.post('/cancel', async (req, res) => {
+        console.log(req.body);
+        res.status(200).send(req.body);
+    })
+
+
+
+
     // add new users (by registration) to database
     app.post('/users', async (req, res) => {
         const user = req.body;
