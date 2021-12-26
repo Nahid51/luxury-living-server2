@@ -105,13 +105,12 @@ client.connect(err => {
         sslcommer.init(data).then(data => {
             //process the response that got from sslcommerz
             //https://developer.sslcommerz.com/doc/v4/#returned-parameters
-            console.log(data);
             if (data?.GatewayPageURL) {
                 return res.status(200).redirect(data?.GatewayPageURL);
             }
             else {
                 return res.status(400).json({
-                    message: 'SSL session was not correct'
+                    message: 'SSL session was not perform successfully'
                 })
             }
 
@@ -133,7 +132,6 @@ client.connect(err => {
         console.log(req.body);
         res.status(200).json(req.body);
     })
-
 
 
 
