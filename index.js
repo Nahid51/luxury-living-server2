@@ -117,20 +117,24 @@ client.connect(err => {
         });
     })
     app.post('/success', async (req, res) => {
-        console.log(req.body);
-        res.status(200).json(req.body);
+        const info = req.body;
+        console.log(info);
+        res.status(200).json(info);
     })
     app.post('/fail', async (req, res) => {
-        console.log(req.body);
-        res.status(400).json(req.body);
+        const info = req.body;
+        console.log(info);
+        res.status(400).json(info);
     })
     app.post('/cancel', async (req, res) => {
-        console.log(req.body);
-        res.status(200).json(req.body);
+        const info = req.body;
+        console.log(info);
+        res.status(200).json(info);
     })
     app.post('/ipn', async (req, res) => {
-        console.log(req.body);
-        res.status(200).json(req.body);
+        const info = req.body;
+        console.log(info);
+        res.status(200).json(info);
     })
 
 
