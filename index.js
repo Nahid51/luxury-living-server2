@@ -65,7 +65,7 @@ client.connect(err => {
         res.send(result);
     })
     //sslcommerz init
-    app.get('/init', (req, res) => {
+    app.get('/init', async (req, res) => {
         const data = {
             total_amount: '1010',
             currency: 'BDT',
