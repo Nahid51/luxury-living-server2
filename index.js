@@ -72,7 +72,6 @@ client.connect(err => {
     })
     //sslcommerz init
     app.post('/init', async (req, res) => {
-        console.log(req.body);
         const { service_name, service_image, service_profile, total_amount, cus_name, cus_email } = req.body;
         const data = {
             total_amount: total_amount,
@@ -115,10 +114,10 @@ client.connect(err => {
             //process the response that got from sslcommerz
             //https://developer.sslcommerz.com/doc/v4/#returned-parameters
             if (data?.GatewayPageURL) {
-                return res.status(200).redirect(data?.GatewayPageURL);
+                return res.status(200).send(data?.GatewayPageURL);
             }
             else {
-                return res.status(400).json({
+                return res.status(400).send({
                     message: 'SSL session was not perform successfully'
                 })
             }
@@ -128,22 +127,22 @@ client.connect(err => {
     app.post('/success', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(200).json(info);
+        res.status(200).send(info);
     })
     app.post('/fail', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(400).json(info);
+        res.status(400).send(info);
     })
     app.post('/cancel', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(200).json(info);
+        res.status(200).send(info);
     })
     app.post('/ipn', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(200).json(info);
+        res.status(200).send(info);
     })
 
 
