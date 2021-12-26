@@ -65,9 +65,9 @@ client.connect(err => {
         res.send(result);
     })
     //sslcommerz init
-    app.get('/init/:amount', (req, res) => {
+    app.get('/init', (req, res) => {
         const data = {
-            total_amount: req.params.amount,
+            total_amount: '1020',
             currency: 'BDT',
             tran_id: 'REF123',
             success_url: 'https://frozen-falls-89510.herokuapp.com/success',
