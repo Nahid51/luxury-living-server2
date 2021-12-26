@@ -65,9 +65,9 @@ client.connect(err => {
         res.send(result);
     })
     //sslcommerz init
-    app.get('/init', (req, res) => {
+    app.get('/init/:amount', (req, res) => {
         const data = {
-            total_amount: '1020',
+            total_amount: req.params.amount,
             currency: 'BDT',
             tran_id: 'REF123',
             success_url: 'https://frozen-falls-89510.herokuapp.com/success',
@@ -111,15 +111,15 @@ client.connect(err => {
     })
     app.post('/success', async (req, res) => {
         console.log(req.body);
-        res.status(200).send(req.body);
+        res.status(200).json(req.body);
     })
     app.post('/fail', async (req, res) => {
         console.log(req.body);
-        res.status(400).send(req.body);
+        res.status(400).json(req.body);
     })
     app.post('/cancel', async (req, res) => {
         console.log(req.body);
-        res.status(200).send(req.body);
+        res.status(200).json(req.body);
     })
 
 
