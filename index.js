@@ -65,9 +65,9 @@ client.connect(err => {
         res.send(result);
     })
     //sslcommerz init
-    app.get('/init/:amount', (req, res) => {
+    app.get('/init', (req, res) => {
         const data = {
-            total_amount: req.params.amount,
+            total_amount: '1010',
             currency: 'BDT',
             tran_id: 'REF123',
             success_url: 'https://frozen-falls-89510.herokuapp.com/success',
@@ -106,7 +106,15 @@ client.connect(err => {
             //process the response that got from sslcommerz
             //https://developer.sslcommerz.com/doc/v4/#returned-parameters
             console.log(data);
-            res.redirect(data.GatewayPageURL);
+            if (data?.GatewayPageURL) {
+                return res.status(200).redirect(data?.GatewayPageURL);
+            }
+            else {
+                return res.status(400).json({
+                    message: 'SSL session was not correct'
+                })
+            }
+
         });
     })
     app.post('/success', async (req, res) => {
@@ -118,6 +126,10 @@ client.connect(err => {
         res.status(400).json(req.body);
     })
     app.post('/cancel', async (req, res) => {
+        console.log(req.body);
+        res.status(200).json(req.body);
+    })
+    app.post('/ipn', async (req, res) => {
         console.log(req.body);
         res.status(200).json(req.body);
     })
