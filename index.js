@@ -71,9 +71,11 @@ client.connect(err => {
         res.send(result);
     })
     //sslcommerz init
-    app.use('/init', async (req, res) => {
+    app.post('/init', async (req, res) => {
+        console.log(req.body);
+        const { service_name, service_image, service_profile, total_amount, cus_name, cus_email } = req.body;
         const data = {
-            total_amount: '1010',
+            total_amount: total_amount,
             currency: 'BDT',
             tran_id: 'REF123',
             success_url: 'https://frozen-falls-89510.herokuapp.com/success',
@@ -81,11 +83,11 @@ client.connect(err => {
             cancel_url: 'https://frozen-falls-89510.herokuapp.com/cancel',
             ipn_url: 'https://frozen-falls-89510.herokuapp.com/ipn',
             shipping_method: 'Courier',
-            product_name: 'Computer.',
-            product_category: 'Electronic',
-            product_profile: 'general',
-            cus_name: 'Customer Name',
-            cus_email: 'cust@yahoo.com',
+            service_name: service_name,
+            service_image: service_image,
+            service_profile: service_profile,
+            cus_name: cus_name,
+            cus_email: cus_email,
             cus_add1: 'Dhaka',
             cus_add2: 'Dhaka',
             cus_city: 'Dhaka',
@@ -107,6 +109,7 @@ client.connect(err => {
             value_c: 'ref003_C',
             value_d: 'ref004_D'
         };
+        console.log(data);
         const sslcommer = new SSLCommerzPayment(process.env.STORE_ID, process.env.STORE_PASS, false) //true for live default false for sandbox
         sslcommer.init(data).then(data => {
             //process the response that got from sslcommerz
