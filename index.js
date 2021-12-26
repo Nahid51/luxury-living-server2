@@ -82,9 +82,10 @@ client.connect(err => {
             cancel_url: 'https://frozen-falls-89510.herokuapp.com/cancel',
             ipn_url: 'https://frozen-falls-89510.herokuapp.com/ipn',
             shipping_method: 'Courier',
-            service_name: service_name,
-            service_image: service_image,
-            service_profile: service_profile,
+            product_name: service_name,
+            product_category: 'Electronic',
+            product_image: service_image,
+            product_profile: service_profile,
             cus_name: cus_name,
             cus_email: cus_email,
             cus_add1: 'Dhaka',
@@ -114,11 +115,11 @@ client.connect(err => {
             //process the response that got from sslcommerz
             //https://developer.sslcommerz.com/doc/v4/#returned-parameters
             if (data?.GatewayPageURL) {
-                return res.status(200).send(data?.GatewayPageURL);
+                res.status(200).send(data?.GatewayPageURL);
             }
             else {
                 return res.status(400).send({
-                    message: 'SSL session was not perform successfully'
+                    message: 'Payment session failed'
                 })
             }
 
