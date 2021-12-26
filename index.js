@@ -105,6 +105,7 @@ client.connect(err => {
         sslcommer.init(data).then(data => {
             //process the response that got from sslcommerz
             //https://developer.sslcommerz.com/doc/v4/#returned-parameters
+            console.log(data);
             res.redirect(data.GatewayPageURL);
         });
     })
