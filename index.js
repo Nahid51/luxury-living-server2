@@ -14,6 +14,7 @@ app.use(bodyParser.json())
 
 app.use(cors());
 app.use(express.json()); // data ke parse kore
+// app.use(express.urlencoded({ extended: true }))
 
 const { MongoClient } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.bsutc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -75,7 +76,7 @@ client.connect(err => {
         const { serviceName, totalAmount, customerName, customerEmail } = req.body;
         const data = {
             total_amount: totalAmount,
-            currency: 'BDT',
+            currency: 'USD',
             tran_id: 'REF123',
             success_url: 'https://frozen-falls-89510.herokuapp.com/success',
             fail_url: 'https://frozen-falls-89510.herokuapp.com/fail',
@@ -83,6 +84,7 @@ client.connect(err => {
             ipn_url: 'https://frozen-falls-89510.herokuapp.com/ipn',
             shipping_method: 'Courier',
             product_name: serviceName,
+            product_profile: 'service',
             product_category: 'Electronic',
             cus_name: customerName,
             cus_email: customerEmail,
@@ -107,7 +109,7 @@ client.connect(err => {
             value_c: 'ref003_C',
             value_d: 'ref004_D'
         };
-        console.log(data);
+        // console.log(data);
         const sslcommer = new SSLCommerzPayment(process.env.STORE_ID, process.env.STORE_PASS, false) //true for live default false for sandbox
         sslcommer.init(data).then(data => {
             //process the response that got from sslcommerz
@@ -120,7 +122,6 @@ client.connect(err => {
                     message: 'Payment session failed'
                 })
             }
-
         });
     })
     app.post('/success', async (req, res) => {
