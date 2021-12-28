@@ -72,9 +72,9 @@ client.connect(err => {
     })
     //sslcommerz init
     app.post('/init', async (req, res) => {
-        const { service_name, service_image, service_profile, total_amount, cus_name, cus_email } = req.body;
+        const { serviceName, totalAmount, customerName, customerEmail } = req.body;
         const data = {
-            total_amount: total_amount,
+            total_amount: totalAmount,
             currency: 'BDT',
             tran_id: 'REF123',
             success_url: 'https://frozen-falls-89510.herokuapp.com/success',
@@ -82,12 +82,10 @@ client.connect(err => {
             cancel_url: 'https://frozen-falls-89510.herokuapp.com/cancel',
             ipn_url: 'https://frozen-falls-89510.herokuapp.com/ipn',
             shipping_method: 'Courier',
-            product_name: service_name,
+            product_name: serviceName,
             product_category: 'Electronic',
-            product_image: service_image,
-            product_profile: service_profile,
-            cus_name: cus_name,
-            cus_email: cus_email,
+            cus_name: customerName,
+            cus_email: customerEmail,
             cus_add1: 'Dhaka',
             cus_add2: 'Dhaka',
             cus_city: 'Dhaka',
@@ -115,10 +113,10 @@ client.connect(err => {
             //process the response that got from sslcommerz
             //https://developer.sslcommerz.com/doc/v4/#returned-parameters
             if (data?.GatewayPageURL) {
-                res.status(200).send(data?.GatewayPageURL);
+                res.status(200).json(data.GatewayPageURL);
             }
             else {
-                return res.status(400).send({
+                return res.status(400).json({
                     message: 'Payment session failed'
                 })
             }
@@ -128,22 +126,22 @@ client.connect(err => {
     app.post('/success', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(200).send(info);
+        res.status(200).json(data);
     })
     app.post('/fail', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(400).send(info);
+        res.status(400).json(data);
     })
     app.post('/cancel', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(200).send(info);
+        res.status(200).json(data);
     })
     app.post('/ipn', async (req, res) => {
         const info = req.body;
         console.log(info);
-        res.status(200).send(info);
+        res.status(200).json(data);
     })
 
 
