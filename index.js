@@ -73,9 +73,10 @@ client.connect(err => {
     })
     //sslcommerz init
     app.post('/init', async (req, res) => {
-        const { serviceName, totalAmount, customerName, customerEmail } = req.body;
+        console.log(req.body);
+
         const data = {
-            total_amount: totalAmount,
+            total_amount: req.body.totalAmount,
             currency: 'USD',
             tran_id: 'REF123',
             success_url: 'https://frozen-falls-89510.herokuapp.com/success',
@@ -83,11 +84,11 @@ client.connect(err => {
             cancel_url: 'https://frozen-falls-89510.herokuapp.com/cancel',
             ipn_url: 'https://frozen-falls-89510.herokuapp.com/ipn',
             shipping_method: 'Courier',
-            product_name: serviceName,
+            product_name: req.body.serviceName,
             product_profile: 'service',
             product_category: 'Electronic',
-            cus_name: customerName,
-            cus_email: customerEmail,
+            cus_name: req.body.customerName,
+            cus_email: req.body.customerEmail,
             cus_add1: 'Dhaka',
             cus_add2: 'Dhaka',
             cus_city: 'Dhaka',
