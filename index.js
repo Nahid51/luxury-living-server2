@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const ObjectId = require('mongodb').ObjectId;
 const SSLCommerzPayment = require('sslcommerz');
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -20,6 +21,7 @@ client.connect(err => {
     const projectCollection = database.collection("projects");
     const reviewCollection = database.collection("reviews");
     const usersCollection = database.collection("users");
+    const ordersCollection = database.collection("orders");
     console.log('connected successfully');
 
     // add service data to database
@@ -67,21 +69,23 @@ client.connect(err => {
     })
     //sslcommerz init
     app.post('/init', async (req, res) => {
-
+        console.log(req.body);
         const data = {
-            total_amount: req.body.total_amount,
+            total_amount: req.body.totalAmount,
             currency: 'USD',
-            tran_id: 'REF123',
+            tran_id: uuidv4(),
             success_url: 'http://localhost:5000/success',
             fail_url: 'http://localhost:5000/fail',
             cancel_url: 'http://localhost:5000/cancel',
             ipn_url: 'http://localhost:5000/ipn',
             shipping_method: 'Courier',
-            product_name: req.body.service_name,
-            product_profile: 'service',
-            product_category: 'Electronic',
-            cus_name: req.body.cus_name,
-            cus_email: req.body.cus_email,
+            payment_status: 'Pending',
+            product_name: req.body.serviceName,
+            product_image: req.body.serviceImage,
+            product_profile: req.body.serviceProfile,
+            product_category: 'Design',
+            cus_name: req.body.cusName,
+            cus_email: req.body.cusEmail,
             cus_add1: 'Dhaka',
             cus_add2: 'Dhaka',
             cus_city: 'Dhaka',
@@ -103,7 +107,8 @@ client.connect(err => {
             value_c: 'ref003_C',
             value_d: 'ref004_D'
         };
-        console.log(data);
+        // insert order data into database
+        const order = await ordersCollection.insertOne(data);
         const sslcommer = new SSLCommerzPayment(process.env.STORE_ID, process.env.STORE_PASS, false) //true for live default false for sandbox
         sslcommer.init(data).then(data => {
             //process the response that got from sslcommerz
@@ -120,21 +125,56 @@ client.connect(err => {
     })
     app.post('/success', async (req, res) => {
         const info = req.body;
-        res.status(200).redirect('http://localhost:3000/success');
+        const filter = { tran_id: info.tran_id };
+        const updateDoc = { $set: { val_id: info.val_id } };
+        const order = await ordersCollection.updateOne(filter, updateDoc);
+        res.status(200).redirect(`http://localhost:3000/dashboard/bookinglist/${info.tran_id}`);
     })
     app.post('/fail', async (req, res) => {
         const info = req.body;
+        const query = { tran_id: info.tran_id };
+        const order = await ordersCollection.deleteOne(query);
         res.status(400).redirect('http://localhost:3000/failed');
     })
     app.post('/cancel', async (req, res) => {
         const info = req.body;
+        const query = { tran_id: info.tran_id };
+        const order = await ordersCollection.deleteOne(query);
         res.status(200).redirect('http://localhost:3000/failed');
     })
     app.post('/ipn', async (req, res) => {
         const info = req.body;
-        res.status(200).redirect('http://localhost:3000/failed');
+        res.status(200).redirect('http://localhost:3000/');
+    })
+    // get specific order info
+    app.get('/orders/:tran_id', async (req, res) => {
+        const id = req.params.tran_id;
+        const query = { tran_id: id };
+        const order = await ordersCollection.findOne(query);
+        res.send(order);
+    })
+    app.post('/orderInfo', async (req, res) => {
+        const id = req.body.email;
+        const filter = { cus_email: id };
+        const allOrder = await ordersCollection.find(filter).toArray();
+        res.send(allOrder);
     })
 
+    app.post('/validate', async (req, res) => {
+        console.log(req.body);
+        const id = req.body.tran_id;
+        const query = { tran_id: id };
+        const order = await ordersCollection.findOne(query);
+        const filter = { tran_id: req.body.tran_id };
+        const updateDoc = { $set: { payment_status: 'Done' } }
+        if (order.val_id === req.body.val_id) {
+            const update = await ordersCollection.updateOne(filter, updateDoc);
+            res.send(update.modifiedCount > 0)
+        }
+        else {
+            res.send('Payment not confirmed. Order Discarded')
+        }
+    });
 
 
     // add new users (by registration) to database
